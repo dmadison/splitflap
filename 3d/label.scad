@@ -16,19 +16,18 @@
 
 use<roboto/Roboto-Bold.ttf>;
 
-module roboto(text, size) {
-    text(text=text, size=size, font="Roboto:style=Bold");
+module roboto(text, size, halign="left") {
+    text(text=text, size=size, font="Roboto:style=Bold", halign=halign);
 }
-module text_label(lines) {
-    text_height=2;
-    module text_lines(lines, text_height, spacing=1.5) {
+module text_label(lines, text_height=2, halign="left") {
+    module text_lines(lines, text_height, spacing=1.5, halign) {
         for (i = [0 : len(lines)-1]) {
             translate([0, text_height * spacing * (len(lines)-1-i), 0]) {
-                roboto(lines[i], text_height);
+                roboto(lines[i], text_height, halign);
             }
         }
     }
-    text_lines(lines, text_height);
+    text_lines(lines, text_height, halign=halign);
 }
 
 
