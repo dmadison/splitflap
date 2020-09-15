@@ -30,6 +30,7 @@ include<pcb.scad>;
 // ##### RENDERING OPTIONS #####
 
 render_3d = true;
+render_test = false;
 
 // 3d parameters:
 render_enclosure = 2; // 0=invisible; 1=translucent; 2=opaque color;
@@ -1013,12 +1014,82 @@ module laser_etch() {
     }
 }
 
+module test_piece_etch() {
+    text_inset = 1;
+    color([0, 0, 0])
+        translate([0, text_inset, thickness])
+            linear_extrude(height=0.1) {
+                translate([text_inset, 0, 0])
+                    text_label([str("t. ", thickness), str("k. ", kerf_width)]);
+                translate([enclosure_length_right - text_inset, 0, 0])
+                    text_label([render_revision], halign="right");
+            }
+}
+
+module test_piece(part_id = -1, etch=false) {
+    // part_id: -1 for all, 0 for enclosure right, 1 for enclosure bottom
+    bolt_backing = 4;
+    test_height = (m4_bolt_length + 1) + bolt_backing;
+    test_width = enclosure_length_right * 2 + kerf_width * 2;
+
+    // Part Outlines
+    if(etch == false) {
+        translate([0, test_height, 0])
+        rotate([0, 0, -90])
+        intersection() {
+            translate([0, 0, 0]) {  // combining these parts as one 'child' for the intersection
+                // Bottom of right enclosure
+                if(part_id <= 0) {
+                    translate([enclosure_height, enclosure_length_right, 0])
+                        mirror([0, 1, 0])  // flip 'over' so the connector notch is 'out'
+                        mirror([1, 0, 0])  // use bottom of enclosure side
+                            enclosure_right();
+                }
+                // Right of bottom enclosure
+                if(part_id < 0 || part_id == 1) {
+                    translate([0, enclosure_length_right + kerf_width, 0]) {
+                        enclosure_bottom();
+                    }
+                }
+            }
+            // Trimming tool
+            translate([0, 0, -eps])
+                linear_extrude(thickness + eps)
+                    square([test_height, test_width]);
+        }
+    }
+
+    // Info Etchings
+    else {
+        // Left test piece etch (enclosure)
+        if(part_id <= 0) {
+            test_piece_etch();
+        }
+
+        // Right test piece etch (bottom)
+        if(part_id < 0 || part_id == 1) {
+            translate([enclosure_length_right + kerf_width, 0, 0])
+            test_piece_etch();
+        }
+    }
+}
+
 if (render_3d) {
     for (i = [0 : render_units - 1]) {
         translate([-enclosure_width/2 + (-(render_units-1) / 2 + i)*(enclosure_width + render_unit_separation), 0, 0])
             split_flap_3d(render_letters[render_units - 1 - i], include_connector=(i != render_units - 1));
     }
-} else {
+}
+else if(render_test) {
+    projection_renderer(render_index=render_index, render_etch=render_etch, kerf_width=kerf_width, panel_height=0, panel_horizontal=0, panel_vertical=0) {
+        test_piece(0);  // right enclosure
+        test_piece(1);  // bottom enclosure
+
+        laser_etch()
+            test_piece(-1, true);
+    }
+}
+else {
     panel_height = enclosure_length + kerf_width + enclosure_length_right + kerf_width + enclosure_width + kerf_width + spool_strut_width + kerf_width;
     projection_renderer(render_index=render_index, render_etch=render_etch, kerf_width=kerf_width, panel_height=panel_height, panel_horizontal=panel_horizontal, panel_vertical=panel_vertical) {
         // Main enclosure (left, right, front)
