@@ -72,6 +72,7 @@ kerf_width = 0.19 - 0.02;
 // MDF, .125in nominal
 // http://www.ponoko.com/make-and-sell/show-material/64-mdf-natural
 thickness = 3.2;
+material_thickness = 3.0;
 
 eps=.01;
 
@@ -257,7 +258,7 @@ module spool_strut_tab_holes() {
 }
 module spool_strut() {
     joint_tab_width = spool_strut_inner_length / spool_strut_tabs;
-    linear_extrude(thickness, center=true) {
+    linear_extrude(material_thickness, center=true) {
         union() {
             translate([spool_strut_length_inset, -spool_strut_tab_width / 2]) {
                 square([spool_strut_length, spool_strut_tab_width]);
@@ -296,7 +297,7 @@ module spool_struts() {
 
 
 module flap_spool_complete(captive_nut=false, motor_shaft=false, magnet_hole=false) {
-    linear_extrude(thickness) {
+    linear_extrude(material_thickness) {
         difference() {
             flap_spool(num_flaps, flap_hole_radius, flap_gap, flap_spool_outset,
                     height=0);
@@ -321,7 +322,7 @@ module flap_spool_complete(captive_nut=false, motor_shaft=false, magnet_hole=fal
 }
 
 module spool_retaining_wall(m4_bolt_hole=false) {
-    linear_extrude(thickness) {
+    linear_extrude(material_thickness) {
         difference() {
             square([spool_strut_width, spool_strut_width], center=true);
             spool_strut_tab_holes();
@@ -390,7 +391,7 @@ module front_tabs_negative() {
 }
 
 module connector_bracket() {
-    linear_extrude(height=thickness) {
+    linear_extrude(height=material_thickness) {
         difference() {
             square([connector_bracket_width, connector_bracket_length_outer]);
             translate([connector_bracket_thickness, -eps]) {
@@ -407,7 +408,7 @@ module connector_bracket() {
 }
 
 module enclosure_front() {
-    linear_extrude(height=thickness) {
+    linear_extrude(height=material_thickness) {
         difference() {
             translate([-enclosure_horizontal_inset, 0, 0]) {
                 square([enclosure_width, enclosure_height]);
@@ -475,7 +476,7 @@ module connector_bracket_side_holes() {
 }
 
 module enclosure_left() {
-    linear_extrude(height=thickness) {
+    linear_extrude(height=material_thickness) {
         difference() {
             square([enclosure_height, enclosure_length]);
             translate([enclosure_height_lower, enclosure_length - front_forward_offset, 0])
@@ -530,7 +531,7 @@ module shaft_centered_motor_hole() {
 }
 
 module enclosure_right() {
-    linear_extrude(height=thickness) {
+    linear_extrude(height=material_thickness) {
         difference() {
             square([enclosure_height, enclosure_length_right]);
             translate([enclosure_height_upper, enclosure_length_right - front_forward_offset, 0])
@@ -602,7 +603,7 @@ module side_captive_nuts(hole_types=[]) {
 
 module enclosure_top() {
     // note, this is flipped upside down (around the x axis) when assembled so the clean side faces out
-    linear_extrude(height = thickness) {
+    linear_extrude(height = material_thickness) {
         translate([thickness, 0, 0]) {
             difference() {
                 union() {
@@ -644,7 +645,7 @@ module enclosure_top() {
 }
 
 module enclosure_bottom() {
-    linear_extrude(height = thickness) {
+    linear_extrude(height = material_thickness) {
         translate([thickness, 0, 0]) {
             difference() {
                 union() {
