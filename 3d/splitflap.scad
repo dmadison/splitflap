@@ -1028,7 +1028,7 @@ module test_piece_etch() {
 
 module test_piece(part_id = -1, etch=false) {
     // part_id: -1 for all, 0 for enclosure right, 1 for enclosure bottom
-    bolt_backing = 4;
+    bolt_backing = 4;  // distance behind bolt hole on bottom piece
     test_height = (m4_bolt_length + 1) + bolt_backing;
     test_width = enclosure_length_right * 2 + kerf_width * 2;
 
@@ -1039,14 +1039,14 @@ module test_piece(part_id = -1, etch=false) {
         intersection() {
             translate([0, 0, 0]) {  // combining these parts as one 'child' for the intersection
                 // Bottom of right enclosure
-                if(part_id <= 0) {
+                if(part_id == -1 || part_id == 0) {
                     translate([enclosure_height, enclosure_length_right, 0])
                         mirror([0, 1, 0])  // flip 'over' so the connector notch is 'out'
                         mirror([1, 0, 0])  // use bottom of enclosure side
                             enclosure_right();
                 }
                 // Right of bottom enclosure
-                if(part_id < 0 || part_id == 1) {
+                if(part_id == -1 || part_id == 1) {
                     translate([0, enclosure_length_right + kerf_width, 0]) {
                         enclosure_bottom();
                     }
@@ -1062,12 +1062,12 @@ module test_piece(part_id = -1, etch=false) {
     // Info Etchings
     else {
         // Left test piece etch (enclosure)
-        if(part_id <= 0) {
+        if(part_id == -1 || part_id == 0) {
             test_piece_etch();
         }
 
         // Right test piece etch (bottom)
-        if(part_id < 0 || part_id == 1) {
+        if(part_id == -1 || part_id == 1) {
             translate([enclosure_length_right + kerf_width, 0, 0])
             test_piece_etch();
         }
