@@ -9,11 +9,11 @@
 
 // 2) General Settings
 #ifndef NUM_MODULES
-#define NUM_MODULES (12)
+#define NUM_MODULES (8)
 #endif
 
 // Whether to force a full rotation when the same letter is specified again
-#define FORCE_FULL_ROTATION true
+#define FORCE_FULL_ROTATION false
 
 // Whether to use/expect a home sensor. Enable for auto-calibration via home
 // sensor feedback. Disable for basic open-loop control (useful when first
@@ -30,16 +30,16 @@ const uint8_t flaps[NUM_FLAPS] = {
   'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
   'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
   '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-  '.',
-  ',',
-  '\'',
+  '!',
+  '?',
+  '+',
 };
 
 // 4) Hardware configuration and features
 #ifndef SPLITFLAP_PIO_HARDWARE_CONFIG
   // Note: these values are only used in the Arduino IDE. For PlatformIO,
   // hardware configuration is set by the environment, in platformio.ini.
-  #define SPI_IO false
+  #define SPI_IO true
   #define REVERSE_MOTOR_DIRECTION false
   #define NEOPIXEL_DEBUGGING_ENABLED true
   #define SSD1306_DISPLAY false
