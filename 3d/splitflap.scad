@@ -229,7 +229,6 @@ connector_bracket_overlap = 4;
 connector_bracket_clearance = 0.10;
 connector_bracket_depth_clearance = 0.20;
 
-
 mounting_hole_inset = m4_button_head_diameter/2 + 2;
 
 
@@ -269,6 +268,21 @@ function character_loop(pos, list=character_list) =
 function get_flap_character(letter, flap, list=character_list) =
     character_loop(character_position(letter) + flap, list);
 
+// 'get' functions to extract values for when this file is 'used' and not 'included'
+function thickness() = thickness; 
+function front_forward_offset() = front_forward_offset;
+function enclosure_length_right() = enclosure_length_right;
+function enclosure_height_lower() = enclosure_height_lower;
+function enclosure_wall_to_wall_width() = enclosure_wall_to_wall_width;
+function enclosure_vertical_inset() = enclosure_vertical_inset;
+function captive_nut_inset() = captive_nut_inset;
+function mounting_hole_inset() = mounting_hole_inset;
+function side_tab_width() = side_tab_width;
+
+function connector_bracket_length() = connector_bracket_length_outer;
+function connector_bracket_width() = connector_bracket_width;
+
+
 
 echo(kerf_width=kerf_width);
 echo(enclosure_height=enclosure_height);
@@ -291,20 +305,24 @@ echo(flap_notch_height=flap_notch_height);
 echo(pcb_to_sensor=pcb_to_sensor(pcb_to_spool));
 
 
-module standard_m4_bolt(nut_distance=-1) {
+module standard_m4_bolt(nut_distance=-1, bolt_length=10) {
     if (render_bolts) {
         color(bolt_color)
-            roughM4_7380(10);
+            roughM4_7380(bolt_length);
         if (nut_distance >= 0) {
-            color(nut_color) {
-                translate([0, 0, nut_distance]) {
-                    linear_extrude(m4_nut_length) {
-                        difference() {
-                            circle(r=m4_nut_width_corners/2, $fn=6);
-                            circle(r=m4_hole_diameter/2, $fn=20);
-                        }
-                    }
-                }
+            translate([0, 0, nut_distance])
+                standard_m4_nut();
+        }
+    }
+}
+
+module standard_m4_nut(hole=true) {
+    color(nut_color) {
+        linear_extrude(m4_nut_length) {
+            difference() {
+                circle(r=m4_nut_width_corners/2, $fn=6);
+                if(hole == true)
+                    circle(r=m4_hole_diameter/2, $fn=20);
             }
         }
     }
